@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>前后端token验证流程 | 蜗牛的博客</title>
+    <meta name="generator" content="VuePress 1.9.7">
+    <script>
+      var _hmt = _hmt || [];
+      (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?5ba250d6d5c7aca25133a4a84a442303";
+        var s = document.getElementsByTagName("script")[0]; 
+        s.parentNode.insertBefore(hm, s);
+      })();
+      </script>
+    <meta name="description" content="这是个有趣的地方">
+    
+    <link rel="preload" href="/my-blog/assets/css/0.styles.e783398f.css" as="style"><link rel="preload" href="/my-blog/assets/js/app.83cea300.js" as="script"><link rel="preload" href="/my-blog/assets/js/3.d190dac7.js" as="script"><link rel="preload" href="/my-blog/assets/js/1.fae72488.js" as="script"><link rel="preload" href="/my-blog/assets/js/13.306063ff.js" as="script"><link rel="prefetch" href="/my-blog/assets/js/10.c63381aa.js"><link rel="prefetch" href="/my-blog/assets/js/11.994d5a3b.js"><link rel="prefetch" href="/my-blog/assets/js/12.dd771f7b.js"><link rel="prefetch" href="/my-blog/assets/js/14.e223b1e0.js"><link rel="prefetch" href="/my-blog/assets/js/4.bd8e8e2b.js"><link rel="prefetch" href="/my-blog/assets/js/5.c5c78e34.js"><link rel="prefetch" href="/my-blog/assets/js/6.00e8bb72.js"><link rel="prefetch" href="/my-blog/assets/js/7.891f0e2c.js"><link rel="prefetch" href="/my-blog/assets/js/8.5b5dd7ed.js"><link rel="prefetch" href="/my-blog/assets/js/9.0529c9f5.js">
+    <link rel="stylesheet" href="/my-blog/assets/css/0.styles.e783398f.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container" data-v-130b300a><div data-v-130b300a><div class="password-shadow password-wrapper-out" style="display:none;" data-v-25ba6db2 data-v-130b300a data-v-130b300a><h3 class="title" data-v-25ba6db2 data-v-25ba6db2>蜗牛的博客</h3> <p class="description" data-v-25ba6db2 data-v-25ba6db2>这是个有趣的地方</p> <label id="box" class="inputBox" data-v-25ba6db2 data-v-25ba6db2><input type="password" value="" data-v-25ba6db2> <span data-v-25ba6db2>Konck! Knock!</span> <button data-v-25ba6db2>OK</button></label> <div class="footer" data-v-25ba6db2 data-v-25ba6db2><span data-v-25ba6db2><i class="iconfont reco-theme" data-v-25ba6db2></i> <a target="blank" href="https://vuepress-theme-reco.recoluan.com" data-v-25ba6db2>vuePress-theme-reco</a></span> <span data-v-25ba6db2><i class="iconfont reco-copyright" data-v-25ba6db2></i> <a data-v-25ba6db2><!---->
+            
+          <!---->
+          2022
+        </a></span></div></div> <div class="hide" data-v-130b300a><header class="navbar" data-v-130b300a><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/my-blog/" class="home-link router-link-active"><!----> <span class="site-name">蜗牛的博客</span></a> <div class="links"><div class="color-picker"><a class="color-button"><i class="iconfont reco-color"></i></a> <div class="color-picker-menu" style="display:none;"><div class="mode-options"><h4 class="title">Choose mode</h4> <ul class="color-mode-options"><li class="dark">dark</li><li class="auto active">auto</li><li class="light">light</li></ul></div></div></div> <div class="search-box"><i class="iconfont reco-search"></i> <input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <nav class="nav-links can-hide"><div class="nav-item"><a href="/my-blog/" class="nav-link"><i class="undefined"></i>
+  首页
+</a></div><div class="nav-item"><div class="dropdown-wrapper"><a class="dropdown-title"><span class="title"><i class="undefined"></i>
+      前端知识点
+    </span> <span class="arrow right"></span></a> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="https://github.com/cleversnail" target="_blank" rel="noopener noreferrer" class="nav-link external"><i class="undefined"></i>
+  Github
+  <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></li><li class="dropdown-item"><!----> <a href="https://juejin.cn/user/2999123449747831/posts" target="_blank" rel="noopener noreferrer" class="nav-link external"><i class="undefined"></i>
+  掘金
+  <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></li></ul></div></div> <!----></nav></div></header> <div class="sidebar-mask" data-v-130b300a></div> <aside class="sidebar" data-v-130b300a><div class="personal-info-wrapper" data-v-39576ba9 data-v-130b300a><!----> <!----> <div class="num" data-v-39576ba9><div data-v-39576ba9><h3 data-v-39576ba9>2</h3> <h6 data-v-39576ba9>文章</h6></div> <div data-v-39576ba9><h3 data-v-39576ba9>0</h3> <h6 data-v-39576ba9>标签</h6></div></div> <ul class="social-links" data-v-39576ba9></ul> <hr data-v-39576ba9></div> <nav class="nav-links"><div class="nav-item"><a href="/my-blog/" class="nav-link"><i class="undefined"></i>
+  首页
+</a></div><div class="nav-item"><div class="dropdown-wrapper"><a class="dropdown-title"><span class="title"><i class="undefined"></i>
+      前端知识点
+    </span> <span class="arrow right"></span></a> <ul class="nav-dropdown" style="display:none;"><li class="dropdown-item"><!----> <a href="https://github.com/cleversnail" target="_blank" rel="noopener noreferrer" class="nav-link external"><i class="undefined"></i>
+  Github
+  <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></li><li class="dropdown-item"><!----> <a href="https://juejin.cn/user/2999123449747831/posts" target="_blank" rel="noopener noreferrer" class="nav-link external"><i class="undefined"></i>
+  掘金
+  <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></li></ul></div></div> <!----></nav> <ul class="sidebar-links"><li><section class="sidebar-group depth-0"><a href="/my-blog/" class="sidebar-heading clickable router-link-active"><span>欢迎学习</span> <!----></a> <ul class="sidebar-links sidebar-group-items"><li><a href="/my-blog/" aria-current="page" class="sidebar-link">学前必读</a></li><li><a href="/my-blog/handbook/test.html" class="sidebar-link">测试功能</a></li></ul></section></li><li><section class="sidebar-group depth-0"><a href="/my-blog/handbook/weakMap" class="sidebar-heading clickable open"><span>基础学习</span> <!----></a> <ul class="sidebar-links sidebar-group-items"><li><a href="/my-blog/handbook/weakMap.html" class="sidebar-link">weakmap</a></li><li><a href="/my-blog/handbook/token.html" aria-current="page" class="active sidebar-link">token</a></li></ul></section></li></ul> </aside> <div class="password-shadow password-wrapper-in" style="display:none;" data-v-25ba6db2 data-v-130b300a><h3 class="title" data-v-25ba6db2 data-v-25ba6db2>前后端token验证流程</h3> <!----> <label id="box" class="inputBox" data-v-25ba6db2 data-v-25ba6db2><input type="password" value="" data-v-25ba6db2> <span data-v-25ba6db2>Konck! Knock!</span> <button data-v-25ba6db2>OK</button></label> <div class="footer" data-v-25ba6db2 data-v-25ba6db2><span data-v-25ba6db2><i class="iconfont reco-theme" data-v-25ba6db2></i> <a target="blank" href="https://vuepress-theme-reco.recoluan.com" data-v-25ba6db2>vuePress-theme-reco</a></span> <span data-v-25ba6db2><i class="iconfont reco-copyright" data-v-25ba6db2></i> <a data-v-25ba6db2><!---->
+            
+          <!---->
+          2022
+        </a></span></div></div> <div data-v-130b300a><main class="page"><section><div class="page-title"><h1 class="title">前后端token验证流程</h1> <div data-v-f875f3fc><i class="iconfont reco-account" data-v-f875f3fc><span data-v-f875f3fc>蜗牛</span></i> <i class="iconfont reco-date" data-v-f875f3fc><span data-v-f875f3fc>2022/3/9</span></i> <!----> <!----></div></div> <div class="theme-reco-content content__default"><p><strong>从思考到动手只有一步之遥</strong></p> <p>前端登录成功，后端返回一个 <code>token</code>，前端将该 <code>token</code> 保存在本地，在接下来的所有的接口请求中，前端都将带上此 <code>token</code> 用作身份识别...这个概念很多人都知道，但如果你仅仅只是知道概念，这篇文章希望你能认真读完它，带你一步一步用实践代码彻底理解 <code>token</code> 的来龙去脉（对新手有好，废话稍多，没办法作者一向婆妈心肠）</p> <h2 id="_1-什么是token"><a href="#_1-什么是token" class="header-anchor">#</a> 1. 什么是token？</h2> <p>用最直白的话来讲，<code>token</code> 是后端生成的，一串加密过的，可以用来表示用户身份的字符串。通常后端如何生成这样一个 <code>token</code> 呢？目前生成token的方式用的比较多的是<code>JWT（JSON Web Token）</code>，你要是想问JWT是个什么玩意儿，就往下看。JWT在服务器认证之后，生成一个</p> <div class="language- extra-class"><pre class="language-text"><code>{
+  &quot;姓名&quot;: &quot;蜗牛&quot;,
+  &quot;角色&quot;: &quot;帅哥&quot;,
+  &quot;到期时间&quot;: &quot;2022年3月8日0点0分&quot;
+}
+</code></pre></div><p>这样的JSON对象返回给前端，但是为了安全性考虑，直接返回这样的json对象显然是很危险的（用户可以篡改数据）所以实际上JWT生成出来的token，还会做加密处理，变成这样：</p> <p><img src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/8aef02458d194ebdbcd6dc8dc865b2da~tplv-k3u1fbpfcp-watermark.image?" alt="image.png"></p> <blockquote><p>注意： token本身没有换行，这里换行的地方是为了展示效果而已，三种不同的颜色分别代表着</p> <ul><li>Header（头部）</li> <li>Payload（负载）</li> <li>Signature（签名）
+对这这三个名词没有概念的同学此刻已经打开了搜索引擎</li></ul></blockquote> <h2 id="_2-为什么要用token"><a href="#_2-为什么要用token" class="header-anchor">#</a> 2. 为什么要用token？</h2> <p>今天是女神节，你女朋友在她的淘宝购物车里面添加了满满一车的商品，她将购物车地址甩给你，你可以在你电脑上直接看到她的购物车清单吗，当然不能。你得登录她的淘宝账号才有权限看到购物车清单，这里就是典型的权限控制，如果淘宝的后台不能识别当前正在访问购物车页面的用户是你女朋友的话，清单数据是不会展示出来的，如果展示出来了，可想而知，你才是那个最慌的~~~ 所以token也称为令牌，专门用来做用户身份识别的</p> <h2 id="_3-前后端准备工作"><a href="#_3-前后端准备工作" class="header-anchor">#</a> 3. 前后端准备工作</h2> <p>我们先创建一个 jwt 的文件夹，再在其中创建一个前端项目和一个后端项目，懒如我就直接用个vue3创建个项目</p> <p><img src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d23004506c7d4b2285b013978a31eabd~tplv-k3u1fbpfcp-watermark.image?" alt="image.png"></p> <p>当前目录结构：
+<img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b2d169a920f04d2082cc46cb559a274b~tplv-k3u1fbpfcp-watermark.image?" alt="image.png"></p> <p>借助vantUI我们先写一个前端登录页面</p> <div class="language- extra-class"><pre class="language-text"><code>&lt;!-- src/views/Login.vue --&gt;
+&lt;template&gt;
+  &lt;van-form @submit=&quot;onSubmit&quot; class=&quot;login-form&quot;&gt;
+    &lt;van-cell-group inset&gt;
+      &lt;van-field
+        v-model=&quot;username&quot;
+        name=&quot;username&quot;
+        label=&quot;用户名&quot;
+        placeholder=&quot;用户名&quot;
+        :rules=&quot;[{ required: true, message: '请填写用户名' }]&quot;
+      /&gt;
+      &lt;van-field
+        v-model=&quot;password&quot;
+        type=&quot;password&quot;
+        name=&quot;password&quot;
+        label=&quot;密码&quot;
+        placeholder=&quot;密码&quot;
+        :rules=&quot;[{ required: true, message: '请填写密码' }]&quot;
+      /&gt;
+    &lt;/van-cell-group&gt;
+    &lt;div style=&quot;margin: 16px;&quot;&gt;
+      &lt;van-button round block type=&quot;primary&quot; native-type=&quot;submit&quot;&gt;登录&lt;/van-button&gt;
+    &lt;/div&gt;
+  &lt;/van-form&gt;
+&lt;/template&gt;
+
+&lt;script&gt;
+import { ref } from 'vue';
+
+export default {
+  setup() {
+    const username = ref('');
+    const password = ref('');
+    const onSubmit = (values) =&gt; {
+      console.log('submit', values);
+    };
+
+    return {
+      username,
+      password,
+      onSubmit,
+    };
+  },
+};
+
+&lt;/script&gt;
+
+&lt;style lang=&quot;less&quot;&gt;
+.login-form{
+  margin-top: 30px;
+}
+&lt;/style&gt;
+</code></pre></div><p>配置该页面的路由 /login 后页面能正常展示</p> <p><img src="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e72b45f3758640f0bfc1badceff815b9~tplv-k3u1fbpfcp-watermark.image?" alt="image.png"></p> <p>点击登录已经能获取到用户输入的账号和密码，那么我们就去发起登录接口请求吧，前端在发送请求之前先安装一个 axios ，再创建目录 src &gt; api &gt; index.js</p> <div class="language- extra-class"><pre class="language-text"><code>// src &gt; api &gt; index.js
+import axios from 'axios'
+import router from '../router'
+
+const BASE_URL = 'http://localhost:3000'
+
+// 请求拦截
+axios.interceptors.request.use((config) =&gt; {
+  let jwtToken = window.localStorage.getItem('jwtToken')
+  if (jwtToken) {
+    // 将token携带在请求头中
+    config.headers.Authorization = jwtToken 
+  }
+  return config
+})
+
+// 响应拦截
+axios.interceptors.response.use(res =&gt; {
+  // 拦截报错的情况
+  if (res.data.code !== 0) {
+    return Promise.reject(res.data.error)
+  }
+  return res
+}, (error) =&gt; {
+  // status在400~500之间的我们认定为是登录过期
+  if (error.response.status &gt;= 400 &amp;&amp; error.response.status &lt; 500) {
+    router.push('/login')
+  }
+  return Promise.reject(error.response.data.error)
+})
+
+export function post(url, body) {
+  return axios.post(BASE_URL+url, body)
+}
+</code></pre></div><p>在api文件夹中创建user.js,再封装一个登录函数：</p> <div class="language- extra-class"><pre class="language-text"><code>// src &gt; api &gt; user.js
+import { post } from './index'
+
+export function login(body) {
+  return post('/login', body).then(res =&gt; res.data)
+}
+</code></pre></div><p>将封装好的函数引入到登录页使用：</p> <div class="language- extra-class"><pre class="language-text"><code>&lt;script&gt;
+import { ref } from 'vue';
+import { login } from '../api/user'   // 新增代码
+export default {
+  setup() {
+    const username = ref('');
+    const password = ref('');
+    const onSubmit = (values) =&gt; {
+      console.log('submit', values);
+      // 新增代码
+      login(values).then(res =&gt; {
+        console.log(res);
+      })
+    };
+
+    return {
+      username,
+      password,
+      onSubmit,
+    };
+  },
+};
+
+&lt;/script&gt;
+</code></pre></div><p>此时我们已经完成前端的准备工作，接下来只需要后端提供登录接口便可以。来到后端项目, 这里我用的 Koa 来写的后端，安装项目所需的依赖 <code>npm i koa koa-router koa2-cors koa-bodyparser</code>
+来到文件夹 server &gt; app.js</p> <div class="language- extra-class"><pre class="language-text"><code>// server &gt; app.js
+const Koa = require('koa')
+const cors = require('koa2-cors') // 处理跨域
+const bodyParser = require('koa-bodyparser'); // 帮助koa解析post请求的参数
+
+const app = new Koa()
+app.use(bodyParser());
+
+app.use(cors());
+
+
+app.listen(3000, () =&gt; console.log('服务已在3000端口启动'))
+
+
+</code></pre></div><p>接下来使用路由完成接口定义，在server文件夹下创建routes文件夹，再在routes中创建user.js</p> <div class="language- extra-class"><pre class="language-text"><code>const router = require('koa-router')()
+
+router.post('/login', (ctx) =&gt; {
+  let user = ctx.request.body
+  console.log(user);
+  // 模拟数据库检验
+  if (1) {
+    ctx.body = {
+      code: 0,
+      data: user.username,
+    }
+  } else {
+    ctx.body = {
+      code: 1,
+      data: '用户名或密码错误'
+    }
+  }
+})
+
+router.post('/home', (ctx) =&gt; {
+  try {
+    ctx.body = {
+      code: 0,
+      data: &quot;got home page&quot;
+    }
+  } catch (error) {
+    ctx.body = {
+      code: 1,
+      data: error
+    }
+  }
+})
+
+module.exports = router
+</code></pre></div><p>再启用路由</p> <div class="language- extra-class"><pre class="language-text"><code>// server &gt; app.js
+const Koa = require('koa')
+const cors = require('koa2-cors') // 处理跨域
+const bodyParser = require('koa-bodyparser'); // 帮助koa解析post请求的参数
++ const userRouter = require('./routes/user')
+
+const app = new Koa()
+app.use(bodyParser());
+
+app.use(cors());
+
++ app.use(userRouter.routes(), userRouter.allowedMethods())
+
+
+app.listen(3000, () =&gt; console.log('服务已在3000端口启动'))
+
+
+</code></pre></div><p>运行nodemon app.js你会看到项目已经正常启动
+接下来我们到页面上输入任意的 账号 和 密码 点击登录按钮你会看到后端打印</p> <p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/31f78ce3ed9a48149a26dbe12b0cbe52~tplv-k3u1fbpfcp-watermark.image?" alt="image.png"></p> <p>成功获取到了前端传递过来的参数，那么接下来才是本文要讲述的核心了</p> <p>当后端拿到前端登录请求传递的参数后，正常来说应该去数据库校验当前的 账号 和 密码 是否正确，如果正确的话，应该向前端返回<code>登录成功</code>并且返回一个<code>token</code>，那么后端如何生成这个token呢？前面我们提到了<code>JWT</code>，我们正是用<code>JWT</code>来生成token</p> <h2 id="_4-后端如何生成token"><a href="#_4-后端如何生成token" class="header-anchor">#</a> 4. 后端如何生成token</h2> <p>我们需要在后端项目中 安装<code>jsonwebtoken</code>，执行 <code>npm i jsonwebtoken</code>,在server下创建utils文件夹，再在utils里面创建一个 jwt.js 文件</p> <div class="language- extra-class"><pre class="language-text"><code>// server &gt; utils &gt; jwt.js
+const jwt = require('jsonwebtoken')
+
+// sign用于生成token，666作为加密的私钥可以自行定义
+function sign(option) {
+  return jwt.sign(option, '666', {
+    expiresIn: 60 // 当前设定过期时间在60秒之后
+  })
+}
+
+module.exports = {
+  sign
+}
+</code></pre></div><p>回到路由文件user.js中使用jwt</p> <div class="language- extra-class"><pre class="language-text"><code>// server &gt; routes &gt; user.js
+
+const router = require('koa-router')()
++ const jwt = require('../utils/jwt')
+
+router.post('/login', (ctx) =&gt; {
+  let user = ctx.request.body
+  console.log(user);
+  // 模拟数据库检验
+  if (1) {
+    + let jwtToken = jwt.sign({id: '1023', username: ctx.request.body.username, admin: true})
+    + console.log(jwtToken);
+    ctx.body = {
+      code: 0,
+      data: 'success',
+      token: jwtToken
+    }
+  } else {
+    ctx.body = {
+      code: 1,
+      data: '用户名或密码错误'
+    }
+  }
+})
+</code></pre></div><p>利用用户id（这里是写死的假数据）和用户名，并且设定为管理员权限，来生成一个token，前端再次发登录请求你会看到</p> <p><img src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/5d9917b72aac4530870232bdd19e0055~tplv-k3u1fbpfcp-watermark.image?" alt="image.png">
+后端已经生成好了一份具有时效性的token，接下里的工作就是将这个token在登录接口中响应回去</p> <div class="language- extra-class"><pre class="language-text"><code>// server &gt; routes &gt; user.js
+
+// 省略部分代码
+if (1) {
+    let jwtToken = jwt.sign({id: '1023', username: ctx.request.body.username, admin: true})
+    console.log(jwtToken);
+    ctx.body = {
+      code: 0,
+      data: user.username,
+      + token: jwtToken
+    }
+  }
+// 省略部分代码
+</code></pre></div><p>再次发起前端的登录请求，我们在浏览器的控制台可以看到</p> <p><img src="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/38c3a381d38b4586aa0177022d4eb1f4~tplv-k3u1fbpfcp-watermark.image?" alt="image.png"></p> <p>剩下的工作就好做了，前端获取到token，存在本地存储中</p> <div class="language- extra-class"><pre class="language-text"><code>// login.vue
+// 省略部分代码
+
+&lt;script&gt;
+import { ref } from 'vue';
+import { login } from '../api/user'
+// 新增代码
+import { useRouter } from 'vue-router';
+export default {
+  setup() {
+    const router = useRouter()
+    const username = ref('');
+    const password = ref('');
+    const onSubmit = (values) =&gt; {
+      login(values).then(res =&gt; {
+        // 新增代码
+        window.localStorage.setItem('jwtToken', res.token)
+        router.push('/home')
+      })
+    };
+
+    return {
+      username,
+      password,
+      onSubmit,
+    };
+  },
+};
+
+&lt;/script&gt;
+// 省略部分代码
+</code></pre></div><p>好了登录接口顺利完成了，前端也拿到了token保存在本地，接下来前端的每次请求都会在请求头里携带上token，到这里你是不是觉得就结束了，不不不，还有一个关键性的问题，如果用户没有登录而是直接手动跳转到 <code>/home</code> 路径下，后端还返回数据嘛，当然不返回，那么后端就需要校验当用户请求 home首页的数据时，是否已经登录或者登录是否失效，换句话说，后端要校验用户请求首页数据时请求头中的token是否合法</p> <h2 id="_5-jwt的合法、权限校验"><a href="#_5-jwt的合法、权限校验" class="header-anchor">#</a> 5. JWT的合法、权限校验</h2> <p>让我们简单的创建一个首页出来</p> <div class="language- extra-class"><pre class="language-text"><code>// src &gt; views &gt; Home.vue
+
+&lt;template&gt;
+  &lt;div&gt;Home&lt;/div&gt;
+&lt;/template&gt;
+
+&lt;script&gt;
+import { onMounted } from 'vue'
+import { home } from '../api/user'
+export default {
+  setup() {
+
+    onMounted(() =&gt; {
+      home().then(res =&gt; {
+        console.log(res);
+      })
+    })
+
+    return {
+
+    }
+  }
+}
+&lt;/script&gt;
+
+&lt;style&gt;
+
+&lt;/style&gt;
+</code></pre></div><p>并配置好Home页面的路由，在api下的user.js中再封装Home页面要用的请求函数</p> <div class="language- extra-class"><pre class="language-text"><code>// src &gt; api &gt; user.js
+
+import { post } from './index'
+
+export function login(body) {
+  return post('/login', body).then(res =&gt; res.data)
+}
+
+// 新增代码
+export function home(body) {
+  return post('/home', body).then(res =&gt; res.data)
+}
+</code></pre></div><p>再回来浏览器 <code>/home</code> 页面上时</p> <p><img src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e66c25dfbe3e434ba1fd85b6be832e7e~tplv-k3u1fbpfcp-watermark.image?" alt="image.png">
+后端接口前面已经写过了，最后这个问题我们需要回到后端代码中</p> <div class="language- extra-class"><pre class="language-text"><code>// server &gt; utils &gt; jwt.js
+
+const jwt = require('jsonwebtoken')
+
+// sign用于生成token，666作为加密的私钥可以自行定义
+function sign(option) {
+  return jwt.sign(option, '666', {
+    expiresIn: 60 // 当前设定过期时间在60秒之后
+  })
+}
+
+// 新增代码
+// isAdmin参数用于权限控制
+let verify = (isAdmin) =&gt; (ctx, next) =&gt; {
+  // 获取到前端传递多来的token
+  let jwtToken = ctx.req.headers.authorization
+  if (jwtToken) {
+    // 校验token的合法性
+    jwt.verify(jwtToken, '666', function(err, decoded) {
+      if (err) {
+        ctx.body = {
+          status: 401,
+          message: 'token失效'
+        }
+      } else {
+        if (isAdmin) {
+          let { admin } = decoded
+          if (admin) {
+            next()
+          } else {
+            ctx.body = {
+              status: 401,
+              message: '你不是管理员!权限不够!'
+            }
+          }
+        } else {
+          next()
+        }
+      }
+    });
+  } else {
+    ctx.body = {
+      status: 401,
+      message: '请提供token'
+    }
+  }
+}
+
+module.exports = {
+  sign,
+  verify
+}
+</code></pre></div><p>这里将 <code>jwt.verify</code>方法做了二次封装，抛出 <code>verify</code> 函数，将这个函数拿到路由接口中使用</p> <div class="language- extra-class"><pre class="language-text"><code>// server &gt; routes &gt; user.js
+// (省略部分代码)
+
+// 修改代码，传入第二参数 jwt.verify()
+router.post('/home', jwt.verify() , (ctx) =&gt; {
+  try {
+    ctx.body = {
+      code: 0,
+      data: &quot;got home page&quot;
+    }
+  } catch (error) {
+    ctx.body = {
+      code: 1,
+      data: error
+    }
+  }
+})
+</code></pre></div><p>如此<code>/home</code>接口被请求时，就会触发jwt的校验，我们来试试效果</p> <p>当我们手动删除浏览器本地存储的 <code>token</code> 后，在<code>/home</code>下刷新页面</p> <p><img src="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/64687595d09542f18b83d0bc707d131d~tplv-k3u1fbpfcp-watermark.image?" alt="image.png"></p> <p>现在你不登录后端是不会返回数据的，当我们重新登录，来到<code>/home</code>页面，等待1分钟之后，再次刷新home页面时，你同样会看到</p> <p><img src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b7dc87d7aacb4cad9516897328f567de~tplv-k3u1fbpfcp-watermark.image?" alt="image.png"></p> <p>奶思！！！最后，这里可能有小伙伴会问，写死的token过期时间岂不是有问题，当然是的，所以正常的操作应该是，当后端在规定的时间没有被任何请求数据的时候，才让token过期的</p> <h2 id="结语"><a href="#结语" class="header-anchor">#</a> 结语</h2> <p>恭喜你对token的理解又更加深刻了，如果觉得有帮助欢迎点赞关注。<a href="https://gitee.com/snail_wn/jwt" target="_blank" rel="noopener noreferrer">源码地址在这里<span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></p> <p>文章参考：</p> <p><a href="http://www.ruanyifeng.com/blog/2018/07/json_web_token-tutorial.html" target="_blank" rel="noopener noreferrer">阮一峰的网络日志<span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></p> <p><a href="https://juejin.cn/post/6844904034181070861" target="_blank" rel="noopener noreferrer">傻傻分不清之Cookie、Session、Token、JWT
+<span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></p></div></section> <footer class="page-edit"><!----> <div class="last-updated"><span class="prefix">上次更新: </span> <span class="time">37 分钟前</span></div></footer> <div class="page-nav"><p class="inner"><span class="prev"><a href="/my-blog/handbook/weakMap.html" class="prev">
+            weakmap
+          </a></span> <!----></p></div> <div class="comments-wrapper"><!----></div> <ul class="side-bar sub-sidebar-wrapper" style="width:12rem;" data-v-cb1513f6><li class="level-2" data-v-cb1513f6><a href="/my-blog/handbook/token.html#_1-什么是token" class="sidebar-link reco-side-_1-什么是token" data-v-cb1513f6>1. 什么是token？</a></li><li class="level-2" data-v-cb1513f6><a href="/my-blog/handbook/token.html#_2-为什么要用token" class="sidebar-link reco-side-_2-为什么要用token" data-v-cb1513f6>2. 为什么要用token？</a></li><li class="level-2" data-v-cb1513f6><a href="/my-blog/handbook/token.html#_3-前后端准备工作" class="sidebar-link reco-side-_3-前后端准备工作" data-v-cb1513f6>3. 前后端准备工作</a></li><li class="level-2" data-v-cb1513f6><a href="/my-blog/handbook/token.html#_4-后端如何生成token" class="sidebar-link reco-side-_4-后端如何生成token" data-v-cb1513f6>4. 后端如何生成token</a></li><li class="level-2" data-v-cb1513f6><a href="/my-blog/handbook/token.html#_5-jwt的合法、权限校验" class="sidebar-link reco-side-_5-jwt的合法、权限校验" data-v-cb1513f6>5. JWT的合法、权限校验</a></li><li class="level-2" data-v-cb1513f6><a href="/my-blog/handbook/token.html#结语" class="sidebar-link reco-side-结语" data-v-cb1513f6>结语</a></li></ul></main> <!----></div></div></div></div><div class="global-ui"><div class="back-to-ceiling" style="right:1rem;bottom:6rem;width:2.5rem;height:2.5rem;border-radius:.25rem;line-height:2.5rem;display:none;" data-v-c6073ba8 data-v-c6073ba8><svg t="1574745035067" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="5404" class="icon" data-v-c6073ba8><path d="M526.60727968 10.90185116a27.675 27.675 0 0 0-29.21455937 0c-131.36607665 82.28402758-218.69155461 228.01873535-218.69155402 394.07834331a462.20625001 462.20625001 0 0 0 5.36959153 69.94390903c1.00431239 6.55289093-0.34802892 13.13561351-3.76865779 18.80351572-32.63518765 54.11355614-51.75690182 118.55860487-51.7569018 187.94566865a371.06718723 371.06718723 0 0 0 11.50484808 91.98906777c6.53300375 25.50556257 41.68394495 28.14064038 52.69160883 4.22606766 17.37162448-37.73630017 42.14135425-72.50938081 72.80769204-103.21549295 2.18761121 3.04276886 4.15646224 6.24463696 6.40373557 9.22774369a1871.4375 1871.4375 0 0 0 140.04691725 5.34970492 1866.36093723 1866.36093723 0 0 0 140.04691723-5.34970492c2.24727335-2.98310674 4.21612437-6.18497483 6.3937923-9.2178004 30.66633723 30.70611158 55.4360664 65.4791928 72.80769147 103.21549355 11.00766384 23.91457269 46.15860503 21.27949489 52.69160879-4.22606768a371.15156223 371.15156223 0 0 0 11.514792-91.99901164c0-69.36717486-19.13165746-133.82216804-51.75690182-187.92578088-3.42062944-5.66790279-4.76302748-12.26056868-3.76865837-18.80351632a462.20625001 462.20625001 0 0 0 5.36959269-69.943909c-0.00994388-166.08943902-87.32547796-311.81420293-218.6915546-394.09823051zM605.93803103 357.87693858a93.93749974 93.93749974 0 1 1-187.89594924 6.1e-7 93.93749974 93.93749974 0 0 1 187.89594924-6.1e-7z" p-id="5405" data-v-c6073ba8></path><path d="M429.50777625 765.63860547C429.50777625 803.39355007 466.44236686 1000.39046097 512.00932183 1000.39046097c45.56695499 0 82.4922232-197.00623328 82.5015456-234.7518555 0-37.75494459-36.9345906-68.35043303-82.4922232-68.34111062-45.57627738-0.00932239-82.52019037 30.59548842-82.51086798 68.34111062z" p-id="5406" data-v-c6073ba8></path></svg></div></div></div>
+    <script src="/my-blog/assets/js/app.83cea300.js" defer></script><script src="/my-blog/assets/js/3.d190dac7.js" defer></script><script src="/my-blog/assets/js/1.fae72488.js" defer></script><script src="/my-blog/assets/js/13.306063ff.js" defer></script>
+  </body>
+</html>
